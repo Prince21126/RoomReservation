@@ -1,0 +1,961 @@
+/* Styles pour le tableau de bord gestionnaire */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* When showing the dashboard page we hide the top nav links (they duplicate sidebar links) */
+.dashboard-page header .nav-links {
+    display: none;
+}
+
+/* Site logo centering and size on dashboard pages */
+.dashboard-page header .logo, .dashboard-page header .site-logo {
+    display: block;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin: 8px 0 6px 0;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 30px 25px;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: #3498db;
+}
+
+.sidebar-header p {
+    color: #bdc3c7;
+    font-size: 0.9rem;
+}
+
+.sidebar-header .account-info {
+    padding: 16px 20px 24px 20px;
+    color: #dfeaf0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.sidebar-header .account-info div { color: #cfe3ee; }
+
+.sidebar-nav {
+    padding: 20px 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin-bottom: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.nav-link:hover {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border-left-color: #3498db;
+}
+
+.nav-link.active {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border-left-color: #3498db;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    padding: 25px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    position: absolute;
+    /* Remonter légèrement le footer pour que le bouton de déconnexion soit visible un peu au-dessus du bord */
+    /* Ajusté à 48px pour 'encore' demandé par l'utilisateur (remonte encore un peu) */
+    bottom: 48px;
+    width: 100%;
+}
+
+.btn-logout {
+    /* default logout button (inline) - don't force full width globally */
+    width: auto;
+    padding: 10px 14px;
+    background: rgba(231, 76, 60, 0.08);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-logout:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Make logout button more visible on dashboard pages */
+.dashboard-page .btn-logout {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+}
+
+/* Header small logout button styling */
+.btn-logout.small {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Cancel buttons used across the dashboard and modals */
+.btn-cancel, button.btn-cancel {
+    background: linear-gradient(180deg,#fff #fff); /* keep text prominent */
+    color: #b91c1c; /* red text */
+    border: 1px solid rgba(185,28,28,0.12);
+    box-shadow: 0 2px 6px rgba(185,28,28,0.06);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-weight:800;
+    cursor:pointer;
+}
+.btn-cancel:hover { background: #fff5f5; }
+
+/* Messages layout (new chat-style UI) */
+.chat-layout { display:grid; grid-template-columns: 320px 1fr; gap:16px; align-items:stretch; }
+.chat-sidebar { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); overflow:hidden; display:flex; flex-direction:column; }
+.chat-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; border-bottom:1px solid #eef2ff; background:#fff; }
+.chat-toolbar .toolbar-title { font-weight:800; color:#111827; display:flex; align-items:center; gap:8px; }
+.total-unread { background:#ef4444; color:#fff; border-radius:999px; padding:2px 8px; font-size:.75rem; font-weight:800; line-height:1; }
+.btn-new-conv { background:#f0fdf4; color:#16a34a; border:1.5px dashed #16a34a; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; transition: transform .08s ease, box-shadow .2s ease, background .2s ease; box-shadow:0 4px 12px rgba(22,163,74,0.08); }
+.btn-new-conv:hover { background:#dcfce7; transform: translateY(-1px); box-shadow:0 10px 20px rgba(22,163,74,0.16); }
+.chat-search { padding:10px; border-bottom:1px solid #eef2ff; }
+.chat-search input { width:100%; padding:10px 12px; border:1.5px solid #e6f0ff; border-radius:10px; }
+.thread-list { overflow:auto; flex: 1; min-height: 0; }
+.thread-item { display:flex; gap:10px; align-items:center; padding:10px 12px; border-bottom:1px solid #f3f4f6; cursor:pointer; background:#fff; transition: background .15s ease; }
+.thread-item:hover { background:#f9fbff; }
+.thread-item.active { background:#eef6ff; }
+.thread-avatar { width:36px; height:36px; border-radius:50%; background:#e6f0ff; display:flex; align-items:center; justify-content:center; color:#2563eb; font-weight:800; }
+.thread-meta { flex:1; min-width:0; }
+.thread-name { font-weight:700; color:#1f2937; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px; }
+.thread-unread { background:#ef4444; color:#fff; border-radius:999px; padding:0 8px; min-width:22px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:800; }
+.thread-preview { font-size:.86rem; color:#6b7280; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.thread-time { font-size:.78rem; color:#94a3b8; }
+
+.chat-panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); display:flex; flex-direction:column; min-height:420px; }
+.chat-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px; border-bottom:1px solid #eef2ff; }
+.chat-title { font-weight:800; color:#111827; }
+.chat-back { display:none; padding:6px 10px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; }
+.chat-messages { padding:12px; overflow:auto; height:60vh; display:flex; flex-direction:column; gap:8px; background:linear-gradient(180deg,#f9fbff,#fff); }
+.bubble { max-width:78%; padding:8px 12px; border-radius:14px; line-height:1.4; position:relative; box-shadow:0 1px 3px rgba(0,0,0,0.05); word-wrap:break-word; }
+.bubble.them { background:#f3f4f6; color:#111827; align-self:flex-start; border-top-left-radius:4px; }
+.bubble.me { background:#dcfce7; color:#065f46; align-self:flex-end; border-top-right-radius:4px; }
+.bubble .meta { font-size:.78rem; color:#6b7280; margin-top:4px; }
+.bubble img { border-radius:8px; max-width:100%; height:auto; cursor:zoom-in; }
+.chat-composer { padding:10px; border-top:1px solid #eef2ff; display:flex; gap:8px; align-items:center; }
+.chat-composer input, .chat-composer textarea, .chat-composer select { border:1.8px solid #e6f0ff; border-radius:10px; }
+
+/* Old proof actions panel kept but buttons restyled below */
+.message-actions-panel { margin-top: 12px; padding-top: 8px; border-top:1px dashed #e5e7eb; }
+.message-actions-panel .proof-row { display:flex; align-items:center; gap:10px; margin:8px 0; }
+.message-actions-panel .proof-row .btn-primary { padding:8px 12px; }
+
+/* Lightbox */
+.lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:3000; }
+.lightbox.open { display:flex; }
+.lightbox-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter: blur(2px); }
+.lightbox-body { position:relative; max-width:92vw; max-height:92vh; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px; }
+.lightbox-close { position:absolute; top:14px; right:14px; background:#fff; border:none; border-radius:999px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(0,0,0,0.2); cursor:pointer; font-size:16px; }
+.lightbox-canvas { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.lightbox-img { max-width:100%; max-height:100%; transform-origin:center center; user-select:none; cursor:grab; }
+.lightbox-controls { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:8px; }
+.zoom-btn { background:#111827; color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
+.zoom-btn:hover { filter:brightness(1.2); }
+
+/* Green action buttons for proofs */
+.btn-approve { background:#16a34a; color:#fff; border:1px solid #16a34a; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; transition: transform .08s ease, box-shadow .2s ease; box-shadow:0 8px 20px rgba(22,163,74,0.15); }
+.btn-approve:hover { transform: translateY(-1px); box-shadow:0 14px 28px rgba(22,163,74,0.22); }
+.btn-request { background:#f0fdf4; color:#16a34a; border:1.5px dashed #16a34a; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; transition: transform .08s ease, box-shadow .2s ease, background .2s ease; box-shadow:0 4px 12px rgba(22,163,74,0.08); }
+.btn-request:hover { background:#dcfce7; transform: translateY(-1px); box-shadow:0 10px 20px rgba(22,163,74,0.16); }
+
+/* New conversation modal */
+.new-conv-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:3100; }
+.new-conv-modal.open { display:flex; }
+.new-conv-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter: blur(2px); }
+.new-conv-content { position:relative; background:#fff; border-radius:12px; box-shadow:0 16px 40px rgba(0,0,0,0.2); width:94vw; max-width:560px; padding:16px; }
+.new-conv-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.new-conv-title { font-weight:800; color:#111827; }
+.new-conv-close { background:#fff; border:1px solid #e5e7eb; border-radius:999px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.new-conv-body .form-row { display:flex; flex-direction:column; gap:8px; margin:10px 0; }
+.new-conv-body select, .new-conv-body input, .new-conv-body textarea { width:100%; padding:10px 12px; border:1.6px solid #e6f0ff; border-radius:10px; }
+.new-conv-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }
+
+/* Make chat responsive */
+@media (max-width: 980px) {
+    .chat-layout { grid-template-columns: 1fr; }
+    .chat-sidebar { display:block; }
+    .chat-panel { display:none; }
+    .chat-panel.active { display:flex; }
+    .chat-back { display:inline-block; }
+    .total-unread { position:relative; top:0; right:0; }
+    .chat-composer { flex-direction: column; align-items: stretch; }
+    .chat-composer input, .chat-composer textarea, .chat-composer select { width: 100%; }
+}
+@media (max-width: 520px) {
+    .chat-messages { height: 68vh; }
+}
+
+/* Message composer tweaks */
+#messageComposer { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+#messageComposer h3 { margin: 0 0 8px; color:#111827; }
+#messageComposer input, #messageComposer textarea, #messageComposer select { border:1.8px solid #e6f0ff; border-radius:10px; box-shadow: inset 0 1px 2px rgba(37,117,252,0.04); }
+#messageComposer #sendMsgBtn { background:#2563eb; color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; }
+#messageComposer #sendMsgBtn:hover { filter:brightness(1.05); }
+
+.header-username { display:none; }
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 0;
+    background: #f8f9fa;
+    min-height: calc(100vh - 70px);
+    overflow: auto;
+}
+
+/* The dashboard HTML uses .dashboard-content (not .main-content) in some templates.
+   Provide the same layout rules for .dashboard-content to avoid mismatches that
+   can lead to parts of the salle information being pushed off-screen or hidden. */
+.dashboard-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 70px);
+    overflow: auto;
+}
+
+.content-header {
+    background: white;
+    padding: 25px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.header-left h1 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.content-header .header-left { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.content-header .header-left .site-logo { font-size: 1.9rem; font-weight: 800; }
+.content-header .header-right { flex: 0; }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification-bell {
+    position: relative;
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.notification-bell:hover {
+    background: #e9ecef;
+    transform: scale(1.1);
+}
+
+#notificationCount {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.user-info {
+    background: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+/* Sections du dashboard */
+.dashboard-sections {
+    padding: 30px;
+}
+
+.dashboard-section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.dashboard-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cartes de statistiques */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+    border-left: 5px solid #3498db;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.stat-card h3 {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-number {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Activités récentes */
+.recent-activities {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.recent-activities h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.activities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.activity-time {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Section réservations */
+.reservations-filters {
+    margin-bottom: 25px;
+}
+
+.reservations-filters select {
+    padding: 10px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.reservations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reservation-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.reservation-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+/* Framed look with clear separation */
+.reservation-item.card-clickable {
+    border: 1px solid rgba(34,80,120,0.06);
+    margin-bottom: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.reservation-item .reservation-header { width: 100%; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+
+.reservation-item .reservation-info,
+.reservation-item .reservation-contact {
+    color: #555;
+    margin-top: 8px;
+    font-size: 0.95rem;
+}
+
+/* Actions are hidden until the card is active */
+.reservation-actions {
+    margin-top: 12px;
+    display: none;
+    gap: 8px;
+}
+
+.reservation-item.active .reservation-actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* Sur grands écrans: actions épinglées en bas à droite de la carte */
+@media (min-width: 992px) {
+    .reservation-item.card-clickable { position: relative; padding-bottom: 60px; }
+    .reservation-item.active .reservation-actions {
+        position: absolute; right: 12px; bottom: 12px; width: auto; gap: 10px; display: flex;
+    }
+}
+
+.reservation-actions .btn-primary, .reservation-actions .btn-secondary {
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.reservation-info h4 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.reservation-details {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.reservation-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-accept {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-reject {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-action:hover {
+    transform: scale(1.05);
+}
+
+/* Badges de statut (séparés visuellement) */
+.status-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:800; font-size:0.85rem; border:1px solid transparent; }
+.status-badge.pending { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+.status-badge.accepted { background:#ecfdf5; color:#065f46; border-color:#a7f3d0; }
+.status-badge.rejected { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+.status-badge.confirmed { background:#eef2ff; color:#1e3a8a; border-color:#bfdbfe; }
+
+/* Ligne statut dans les détails jour (séparée du texte) */
+.reservation-status-line { margin-top:6px; }
+
+/* Historique des actions */
+#historique-reservations { margin-top: 18px; }
+#historique-reservations h3 { margin: 0 0 8px 0; color:#2c3e50; }
+.history-list { display: flex; flex-direction: column; gap: 10px; }
+.history-item { background:#fff; border:1px solid rgba(34,80,120,0.06); border-radius:10px; padding:12px 14px; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center }
+.history-item .title { font-weight:800; color:#1f2937 }
+.history-item .meta { color:#6b7280; font-size:0.9rem; display:flex; gap:8px; align-items:center }
+.history-item.accepted { border-left:4px solid #10b981 }
+.history-item.rejected { border-left:4px solid #ef4444 }
+.history-item.confirmed { border-left:4px solid #2563eb }
+
+/* Calendrier */
+.calendar-actions {
+    margin-bottom: 20px;
+}
+
+.calendar {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Calendar styles removed from dashboard (reverted) */
+
+
+/* Formulaire salle */
+.salle-form {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Galerie photos */
+.photos-upload {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.photos-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Boutons généraux */
+.btn-primary {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 40px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 250px;
+    }
+    
+    .main-content {
+        margin-left: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    .dashboard-content { margin-left: 0; padding: 20px; }
+    
+    .content-header {
+        flex-direction: row;
+        gap: 8px;
+        text-align: center;
+        align-items: center;
+    }
+
+    /* Keep header-left centered while allowing header-right to sit at top-right */
+    .content-header .header-left { order: 1; }
+    .content-header .header-right { order: 2; }
+
+    /* On narrow screens place the user badge at top-right so it doesn't push content */
+    .content-header .header-right { position: absolute; right: 12px; top: 12px; }
+    
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .reservation-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .sidebar-footer {
+        position: relative;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-sections {
+        padding: 20px 15px;
+    }
+    
+    .content-header {
+        padding: 20px;
+    }
+    
+    .stat-card {
+        padding: 20px;
+    }
+    
+    .modal-content {
+        padding: 30px 20px;
+        margin: 10% auto;
+    }
+    
+    .photos-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+/* Mobile sidebar toggle: hidden by default on small screens, can be shown with .sidebar-open on body */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100vh;
+        width: 260px;
+        z-index: 9999;
+        transition: left 220ms ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.12);
+    }
+
+    body.sidebar-open .sidebar {
+        left: 0;
+    }
+
+    /* Dim the main content when sidebar is open */
+    body.sidebar-open .main-content {
+        filter: blur(1px);
+        pointer-events: none;
+    }
+
+    /* Add a top bar hamburger */
+    .header-hamburger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-right: 8px;
+    }
+}
+
+/* Styles for gestionnaire edit form (salle-form) */
+.salle-form {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,252,255,0.95));
+    border: 1px solid rgba(34,80,120,0.06);
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(34,80,120,0.06);
+    animation: fadeInUp .45s ease both;
+}
+.salle-form { position: relative }
+.salle-form .form-section {
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #eef6fb;
+}
+.salle-form .form-section h3 {
+    margin: 0 0 12px 0;
+    color: #1f3a58;
+    font-size: 1.08rem;
+    letter-spacing: 0.2px;
+}
+.salle-form .form-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.salle-form .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.salle-form label { font-weight: 600; color: #34495e; }
+.salle-form input[type="text"], .salle-form input[type="number"], .salle-form input[type="email"], .salle-form textarea, .salle-form select {
+    padding: 12px 14px;
+    border: 1px solid rgba(37,117,252,0.08);
+    border-radius: 10px;
+    /* subtle kaki background for the form */
+    background: linear-gradient(180deg,#eef1dd,#f7f9ef); /* khaki-ish */
+    font-size: 1rem;
+    transition: box-shadow .18s ease, transform .12s ease, border-color .15s ease;
+}
+.salle-form input[type="text"]:focus, .salle-form input[type="number"]:focus, .salle-form textarea:focus, .salle-form select:focus {
+    outline: none;
+    box-shadow: 0 8px 20px rgba(37,117,252,0.08);
+    border-color: rgba(37,117,252,0.28);
+    transform: translateY(-1px);
+}
+.salle-form textarea { min-height: 88px; resize: vertical; }
+
+.services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.service-checkbox { display:inline-flex; align-items:center; gap:8px; background:#f7fbff; padding:8px 10px; border-radius:8px; border:1px solid #e6f0fb; font-weight:600; color:#2c3e50 }
+.service-checkbox input { /* visually hide native checkbox but keep it accessible */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.service-checkbox .checkmark { width:16px; height:16px; border-radius:3px; background:#fff; border:1px solid #cfe6fb; display:inline-block; transition: all .12s ease; margin-right:6px }
+.service-checkbox input:checked + .checkmark { background: linear-gradient(90deg,#6a11cb,#2575fc); border-color: transparent }
+.service-checkbox input:checked + .checkmark::after { content: '\2713'; color: #fff; display:block; font-size:11px; text-align:center; line-height:16px }
+
+.jours-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
+.jour-checkbox { display:inline-flex; align-items:center; gap:8px; padding:6px 8px; background:#fff; border-radius:6px; border:1px solid #eef6fb; font-size:0.95rem }
+.jour-checkbox input { margin:0 }
+
+.tarif-section { display:flex; flex-direction:column; gap:8px }
+
+.salle-form .form-actions, .salle-form > div[style] {
+    display:flex; gap:10px; justify-content:flex-end; margin-top:8px
+}
+
+/* Button tweaks to be slightly larger in the form */
+.salle-form .btn-primary { padding:10px 18px; border-radius:10px }
+.salle-form .btn-secondary { padding:8px 14px; border-radius:10px }
+
+/* Enhanced primary button gradient */
+.salle-form .btn-primary {
+    background: linear-gradient(90deg,#6a11cb,#2575fc);
+    color: #fff; border: none; box-shadow: 0 8px 22px rgba(37,117,252,0.14);
+}
+.salle-form .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(37,117,252,0.18) }
+.salle-form .btn-secondary { background: #eef6fb; border:1px solid rgba(37,117,252,0.06); color:#1f3a58 }
+
+/* Specific button colors requested */
+.btn-home { background: #3498db; color: #fff; border: none; padding: 10px 16px; border-radius:8px }
+.btn-logout, .btn-cancel { background: #e74c3c !important; color: #fff !important; border: none; padding: 10px 14px; border-radius:8px }
+.btn-edit { background: #27ae60; color: #fff; border: none; padding: 10px 16px; border-radius:8px }
+
+/* Price fields slightly bolder to indicate currency */
+.price-field { font-weight: 600 }
+
+/* Manager info header styling (blue background) */
+#gestionnaireInfo div { background:#3498db !important; color:#fff !important; padding:12px; border-radius:8px; box-shadow:none }
+
+/* Make buttons stack full width on small screens for easier tapping */
+@media (max-width: 520px) {
+    .salle-form .form-actions, .salle-form > div[style] { flex-direction: column-reverse; align-items: stretch }
+    .salle-form .btn-primary, .salle-form .btn-secondary { width: 100%; display: block }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .salle-form .form-row { flex-direction: column }
+    .services-grid { justify-content: flex-start }
+}
+
+/* Hamburger should be hidden on larger screens and fixed top-left on small screens */
+.header-hamburger { display: none; }
+@media (max-width: 768px) {
+    .header-hamburger { display: inline-flex; position: fixed; left: 12px; top: 12px; z-index:10001; border-radius:10px; }
+    /* When hamburger fixed, move logo a bit down so it doesn't overlap */
+    .dashboard-page header .site-logo { margin-top: 22px; }
+    /* Also adjust manager dashboard logo selector which uses .logo */
+    .dashboard-page header .logo { margin-top: 22px; }
+}
+
+/* Remove notification bell on dashboard pages */
+.dashboard-page .notification-bell { display: none !important; }
+
+/* Hide legacy composer inside Messages section to avoid double composer on small screens */
+.dashboard-page #section-messages #messageComposer { display: none; }

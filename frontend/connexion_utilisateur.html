@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Connexion Utilisateur - Room Reservation</title>
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/common.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <a href="index.html" class="back-button">← Retour</a>
+            <h1>Connexion</h1>
+            <h2>Connexion Utilisateur</h2>
+        </div>
+
+        <form class="auth-form" id="loginForm" autocomplete="on">
+            <div id="loginMessage" role="status" aria-live="polite" style="min-height:24px;margin-bottom:8px"></div>
+
+            <div class="form-group">
+                <label for="identifier">Email ou Téléphone</label>
+                <input 
+                    type="text" 
+                    id="identifier" 
+                    name="identifier" 
+                    placeholder="email@exemple.com ou +241 0X XX XX XX"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group" style="position:relative;">
+                <label for="password">Mot de passe</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="password-field"
+                    placeholder="Entrez votre mot de passe"
+                    autocomplete="current-password"
+                    required
+                >
+                <button type="button" class="password-toggle" data-target="password" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;">👁️</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" data-icon="🔒">Se connecter</button>
+
+            <div class="auth-links">
+                <a href="#" id="createUserAccountLink">Créer un compte utilisateur</a>
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+    import { ApiConfig } from './js/config/api.js';
+
+    function notify(message, type = 'info') {
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+        const el = document.createElement('div'); el.className = `notification ${type}`; el.textContent = message;
+        el.style.cssText = `position:fixed;top:18px;right:18px;padding:12px 16px;border-radius:8px;z-index:10000;box-shadow:0 6px 18px rgba(0,0,0,0.12);background:${type==='error'?'#f8d7da':type==='success'?'#d4edda':'#d1ecf1'};color:${type==='error'?'#721c24':type==='success'?'#155724':'#0c5460'}`;
+        document.body.appendChild(el);
+        setTimeout(()=>{ if (el.parentNode) el.parentNode.removeChild(el); }, 4000);
+    }
+
+    function initLoginPage(){
+        console.debug('[LOGIN] init');
+        const form = document.getElementById('loginForm');
+        const loginMessage = document.getElementById('loginMessage');
+        if (!form) { console.warn('[LOGIN] form#loginForm introuvable'); return; }
+
+        function setInlineMessage(text, type = 'info'){
+            if (!loginMessage) return;
+            loginMessage.textContent = text || '';
+            loginMessage.style.color = type === 'error' ? '#721c24' : (type === 'success' ? '#155724' : '#0c5460');
+            loginMessage.style.background = type === 'error' ? '#f8d7da' : (type === 'success' ? '#d4edda' : 'transparent');
+            loginMessage.style.padding = text ? '8px 10px' : '';
+            loginMessage.style.borderRadius = text ? '6px' : '';
+            if (text && typeof loginMessage.focus === 'function') loginMessage.focus();
+        }
+
+        // Lien "Créer un compte utilisateur" -> informer qu'un compte est créé lors de la première réservation
+        const createLink = document.getElementById('createUserAccountLink');
+        if (createLink && !createLink.dataset.bound) {
+            createLink.dataset.bound = '1';
+            createLink.addEventListener('click', (e) => {
+                try { e.preventDefault(); } catch {}
+                const msg = "Pour créer un compte, vous devez d'abord réserver une salle. Un compte sera créé automatiquement lors de votre première réservation.";
+                setInlineMessage(msg, 'info');
+                notify(msg, 'info');
+            });
+        }
+
+        // Extra safety: also bind click on submit button in case default submit is blocked by the browser
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn && !submitBtn.dataset.bound) {
+            submitBtn.dataset.bound = '1';
+            submitBtn.addEventListener('click', (e) => {
+                // Let the form submit handler do the work
+            });
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setInlineMessage('');
+            const identifierEl = document.getElementById('identifier');
+            const passwordEl = document.getElementById('password');
+            const identifier = identifierEl ? identifierEl.value.trim() : '';
+            const password = passwordEl ? passwordEl.value : '';
+            if (!identifier || !password) { setInlineMessage('Veuillez remplir tous les champs', 'error'); notify('Veuillez remplir tous les champs', 'error'); return; }
+
+            const original = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) { submitBtn.textContent = 'Connexion...'; submitBtn.disabled = true; }
+            const controls = Array.from(form.querySelectorAll('input, button'));
+            controls.forEach(el => el.disabled = true);
+
+            try {
+                // Si la page est servie depuis un serveur statique (5500/3000),
+                // utiliser une soumission de formulaire vers l'origine PHP afin que le cookie de session soit bien créé en 1st-party.
+                const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '';
+                const isStaticOrigin = origin.includes(':5500') || origin.includes(':3000');
+                if (isStaticOrigin) {
+                    const f = document.createElement('form');
+                    f.method = 'POST';
+                    f.action = 'http://localhost:8000/api/user_login.php?redirect=1';
+                    const i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'identifier'; i1.value = identifier; f.appendChild(i1);
+                    const i2 = document.createElement('input'); i2.type = 'hidden'; i2.name = 'password'; i2.value = password; f.appendChild(i2);
+                    const i3 = document.createElement('input'); i3.type = 'hidden'; i3.name = 'redirect'; i3.value = '1'; f.appendChild(i3);
+                    document.body.appendChild(f);
+                    f.submit();
+                    return;
+                }
+
+                const result = await ApiConfig.makeRequest('/user_login.php', {
+                    method: 'POST',
+                    body: JSON.stringify({ identifier, password })
+                });
+
+                console.debug('[LOGIN] api result:', result);
+                if (result && result.success) {
+                    // Vérifier immédiatement que la session est bien active avant de rediriger
+                    try {
+                        const check = await ApiConfig.makeRequest('/current_user.php');
+                        if (check && check.success) {
+                            setInlineMessage('Connexion réussie — redirection...', 'success');
+                            notify('Connexion réussie', 'success');
+                            setTimeout(()=> { try { window.location.assign('tableau-bord-utilisateur.html'); } catch(e){ window.location.href = 'tableau-bord-utilisateur.html'; } }, 300);
+                        } else {
+                            setInlineMessage('Connexion réussie mais session absente. Ouvrez le site via http://localhost:8000/frontend/.', 'error');
+                            notify('Session non détectée — vérifiez l\'URL (évitez file:// ou un autre port/hôte).', 'error');
+                        }
+                    } catch (e) {
+                        setInlineMessage('Connexion réussie mais impossible de vérifier la session. Assurez-vous d\'utiliser la même origine (http://localhost:8000).', 'error');
+                        notify('Impossible de vérifier la session', 'error');
+                    }
+                } else {
+                    const msg = result && result.message ? result.message : 'Connexion échouée';
+                    setInlineMessage(msg, 'error');
+                    notify(msg, 'error');
+                }
+            } catch (err) {
+                console.error('[LOGIN] failed', err);
+                const msg = err && err.message ? err.message : 'Erreur lors de la connexion';
+                setInlineMessage(msg, 'error');
+                notify(msg, 'error');
+            } finally {
+                if (submitBtn) { submitBtn.textContent = original; submitBtn.disabled = false; }
+                controls.forEach(el => el.disabled = false);
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLoginPage);
+    } else {
+        initLoginPage();
+    }
+    </script>
+
+    <script>
+    // Password show/hide toggles
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-target');
+                const input = document.getElementById(id);
+                if (!input) return;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = '🙈';
+                    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+                } else {
+                    input.type = 'password';
+                    btn.textContent = '👁️';
+                    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

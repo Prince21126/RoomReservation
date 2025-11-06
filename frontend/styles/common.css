@@ -1,0 +1,181 @@
+/* Common styles shared across the app */
+
+/* Calendar design tokens (single source of truth for both pages) */
+:root {
+    /* Today (green) */
+    --cal-today-bg1: #e6fff0;
+    --cal-today-bg2: #d6ffe0;
+    --cal-today-border: #2fa85a;
+
+    /* Reserved (brown) */
+    --cal-reserved-bg1: #f7efe7;   /* light brown */
+    --cal-reserved-bg2: #f3e6db;   /* light brown */
+    --cal-reserved-border: #8b5e3c; /* brown border */
+    --cal-reserved-dot: #8b5e3c;    /* brown dot */
+
+    /* Pending (gray) */
+    --cal-pending-bg1: #f3f4f6;   /* gray 100 */
+    --cal-pending-bg2: #e5e7eb;   /* gray 200 */
+    --cal-pending-border: #9ca3af; /* gray 400 */
+    --cal-pending-dot: #9ca3af;    /* gray dot */
+
+    /* Blocked (manager blocked day) */
+    --cal-blocked-bg1: #f8fafc;   /* soft slate */
+    --cal-blocked-bg2: #eef2f7;   /* soft slate */
+    --cal-blocked-border: #94a3b8; /* slate border */
+}
+
+/* Generic utilities */
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Back button (common across pages) */
+.back-button {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    transition: all 0.16s ease;
+    background: rgba(0, 0, 0, 0.55);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+    z-index: 9999;
+}
+
+/* Chat composer (manager messages) */
+.chat-composer{display:grid;grid-template-columns:1fr minmax(140px,2fr) auto auto;gap:10px;align-items:center;padding:10px;border-top:1px solid #e6f0ff;background:#f9fbff;border-radius:0 0 12px 12px}
+.chat-input,.chat-text{background:#fff;border:1.8px solid #e6f0ff;border-radius:10px;padding:10px 12px;box-shadow:inset 0 1px 2px rgba(37,117,252,0.04);transition:border-color .15s ease, box-shadow .15s ease}
+.chat-input:focus,.chat-text:focus{outline:none;border-color:#2575fc;box-shadow:0 0 0 4px rgba(37,117,252,0.12)}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid #dbe7fb;background:#fff;color:#2563eb;cursor:pointer;box-shadow:0 2px 8px rgba(37,117,252,0.08);transition:transform .12s ease, box-shadow .12s ease, background .12s ease}
+.icon-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(37,117,252,0.14);background:#f3f8ff}
+.icon-btn:active{transform:translateY(0)}
+.btn-send{background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;border-color:transparent}
+.btn-send:hover{filter:brightness(1.05)}
+
+/* Subtle modal pop-in animation */
+.modal.open .modal-content{animation:popIn .18s ease-out}
+@keyframes popIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Responsive tweaks for chat composer */
+@media (max-width: 780px){
+    .chat-composer{grid-template-columns:1fr auto auto}
+    .chat-input{grid-column:1/-1}
+    .chat-text{grid-column:1/-1}
+}
+
+/* Calendar shared styles (used by details & search pages) */
+.calendar-card { display:block; background: transparent; }
+.calendar-header { display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:12px; }
+.calendar-title { font-size:1.1rem; font-weight:800; color:#2575fc; text-align:center; flex:1; }
+.calendar-controls { display:flex; gap:8px; align-items:center; }
+.calendar-controls .btn-small { background:#fff; border:1px solid #dbe7fb; padding:6px 10px; border-radius:10px; cursor:pointer; box-shadow: 0 2px 8px rgba(37,117,252,0.04); }
+.calendar-weekdays { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; margin-bottom:6px; }
+.calendar-weekday { font-weight:700; color:#6b7280; padding:8px 6px; text-align:center; background:#f7fafc; border-radius:8px; font-size:0.85rem; }
+.calendar-days { display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; }
+.calendar-day { background:#fff; border:2px solid #e6f0ff; border-radius:10px; min-height:64px; padding:8px; text-align:right; position:relative; cursor:pointer; display:flex; align-items:flex-start; justify-content:flex-end; box-shadow: 0 6px 18px rgba(14, 45, 84, 0.04); transition: transform 180ms ease, box-shadow 180ms ease; }
+.calendar-day .date-num { font-weight:700; color:#111827; }
+.calendar-day.empty { background:transparent; border:none; cursor:default; box-shadow:none; }
+.calendar-day.today {
+    background: linear-gradient(180deg,var(--cal-today-bg1),var(--cal-today-bg2));
+    border:2px solid var(--cal-today-border);
+    box-shadow: 0 6px 18px rgba(47,162,90,0.08), inset 0 0 0 3px rgba(47,162,90,0.06);
+}
+.calendar-day.reserved { background: linear-gradient(135deg,var(--cal-reserved-bg1),var(--cal-reserved-bg2)); border:2px solid var(--cal-reserved-border); }
+/* Pending visual (marron) */
+.calendar-day.pending { background: linear-gradient(135deg,var(--cal-pending-bg1),var(--cal-pending-bg2)); border:2px solid var(--cal-pending-border); }
+/* Blocked dates share the same shape but different palette */
+.calendar-day.blocked { background: linear-gradient(135deg,var(--cal-blocked-bg1),var(--cal-blocked-bg2)); border:2px solid var(--cal-blocked-border); }
+/* If a day is both reserved and today, show today (green) as priority */
+.calendar-day.reserved.today, .calendar-day.today.reserved {
+    background: linear-gradient(180deg,var(--cal-today-bg1),var(--cal-today-bg2));
+    border:2px solid var(--cal-today-border);
+}
+.calendar-day:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(14,45,84,0.08); }
+.calendar-day.reserved::before { content: ''; position:absolute; left:10px; top:10px; width:10px; height:10px; border-radius:50%; background:var(--cal-reserved-dot); box-shadow:0 0 0 6px rgba(139,94,60,0.10); }
+/* Pending dot */
+.calendar-day.pending::before { content: ''; position:absolute; left:10px; top:10px; width:10px; height:10px; border-radius:50%; background:var(--cal-pending-dot); box-shadow:0 0 0 6px rgba(156,163,175,0.12); }
+/* Optional badge for blocked days */
+.calendar-day.blocked::before { content: ''; position:absolute; left:10px; top:10px; width:10px; height:10px; border-radius:50%; background:var(--cal-blocked-border); box-shadow:0 0 0 6px rgba(148,163,184,0.12); }
+
+/* animation helpers */
+.calendar-card { opacity: 0; transform: translateY(8px); transition: opacity 260ms ease, transform 260ms ease; }
+.calendar-card.show { opacity: 1; transform: translateY(0); }
+
+/* subtle pulse for today's date badge */
+.calendar-day.today { animation: todayPulse 2200ms ease-in-out infinite; }
+@keyframes todayPulse {
+    0% { box-shadow: 0 6px 18px rgba(47,162,90,0.06), inset 0 0 0 3px rgba(47,162,90,0.04); }
+    50% { box-shadow: 0 10px 28px rgba(47,162,90,0.10), inset 0 0 0 4px rgba(47,162,90,0.06); }
+    100% { box-shadow: 0 6px 18px rgba(47,162,90,0.06), inset 0 0 0 3px rgba(47,162,90,0.04); }
+}
+
+@media (max-width: 640px) {
+    .calendar-header { flex-direction: row; align-items:center; }
+    .calendar-title { font-size:1rem; }
+    .calendar-weekdays { grid-template-columns: repeat(7, 1fr); gap:4px; }
+    .calendar-weekday { font-size:0.75rem; padding:6px 4px; }
+    .calendar-days { grid-template-columns: repeat(7, 1fr); gap:6px; }
+    .calendar-day { min-height:44px; padding:6px; font-size:0.9rem; }
+    .calendar-card, .salle-calendar { padding: 10px; }
+}
+
+/* On hover / touch we want a blue pill (consistent with app primary) */
+.back-button:hover,
+.back-button:active,
+.back-button:focus {
+    background-color: #2575fc; /* app primary blue */
+    color: white;
+    transform: translateX(-6px);
+    border-color: rgba(37,117,252,0.2);
+}
+
+/* Mobile adjustment: slightly smaller and less offset */
+@media (max-width: 480px) {
+    .back-button {
+        left: 8px;
+        top: 8px;
+        padding: 7px 10px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Calendar styles removed (reverted). Keep mobile icon/button rules. */
+
+/* Mobile: transform buttons into icons where possible */
+@media (max-width: 480px) {
+    /* Make buttons explicitly marked with .icon-only become circular icon buttons on very small screens
+       Avoid automatically hiding text for all buttons with data-icon (keeps primary action labels readable).
+       To use icon-only buttons, add the class 'icon-only' to the button element. */
+    .btn.icon-only[data-icon], .btn.icon-only[data-icon].btn-primary, .btn.icon-only[data-icon].btn-secondary, .view-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-indent: -9999px; /* hide original text content */
+    }
+
+    /* Keep inline SVG visible inside icon buttons */
+    .view-btn svg, .btn.icon-only[data-icon] svg { width: 20px; height: 20px; display: block; }
+
+    /* If a data-icon attribute is present on an icon-only button, show it as the icon */
+    .btn.icon-only[data-icon] { text-indent: 0; }
+    .btn.icon-only[data-icon]::before {
+        content: attr(data-icon);
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    /* Back-button: compact circular and display only the arrow */
+    .back-button { width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center; text-indent:-9999px; }
+    .back-button::before { content: '←'; font-size:18px; color:white; text-indent:0; }
+    .back-button span{ display:none; }
+}
+

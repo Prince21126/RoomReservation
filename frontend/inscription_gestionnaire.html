@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Gestionnaire - Room Reservation</title>
+    <link rel="stylesheet" href="styles/inscription.css">
+    <link rel="stylesheet" href="styles/common.css">
+</head>
+<body>
+    <div class="inscription-container">
+        <div class="inscription-header">
+            <a href="index.html" class="back-button">← Retour</a>
+            <h1>Inscription Gestionnaire</h1>
+            <p class="subtitle">Complétez le formulaire pour enregistrer votre salle et commencer à recevoir des réservations.</p>
+        </div>
+
+        <form class="inscription-form" id="registerForm">
+            <!-- Section 1: Informations personnelles -->
+            <section class="form-section">
+                <h2>Vos informations</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prenom">Prénom <span class="required">*</span></label>
+                        <input type="text" id="prenom" name="prenom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nom">Nom <span class="required">*</span></label>
+                        <input type="text" id="nom" name="nom" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telephone">Téléphone <span class="required">*</span></label>
+                        <input type="tel" id="telephone" name="telephone" placeholder="Ex: 0809/800777" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephoneSecondaire">Téléphone secondaire (optionnel)</label>
+                        <input type="tel" id="telephoneSecondaire" name="telephoneSecondaire">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Mot de passe <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" class="password-field" required>
+                        <button type="button" class="password-toggle" data-target="password" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="margin-left:8px;">👁️</button>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <span class="strength-text">Force du mot de passe</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmer <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="password-field" required>
+                        <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="margin-left:8px;">👁️</button>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Section 2: Informations de la salle -->
+            <section class="form-section">
+                <h2>Informations de la salle</h2>
+                
+                <div class="form-group">
+                    <label for="nomSalle">Nom de la salle <span class="required">*</span></label>
+                    <input type="text" id="nomSalle" name="nomSalle" placeholder="Ex: Marie Classe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adresse">Adresse / Localisation de la salle <span class="required">*</span></label>
+                    <input type="text" id="adresse" name="adresse" placeholder="Ex: Quartier Katana, Avenue Principale" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="capacite">Capacité <span class="required">*</span></label>
+                    <input type="number" id="capacite" name="capacite" placeholder="Ex: 500" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description de la salle</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Brève description de votre salle..."></textarea>
+                </div>
+                
+                <!-- Section 3: Images de la salle -->
+                <hr class="section-divider">
+
+                <section class="form-section">
+                    <h2>Images de la salle</h2>
+                    
+                    <div class="images-upload">
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                            <div class="upload-content">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                                    <polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <h3>Glissez-déposez vos images ici</h3>
+                                <p>ou <span class="browse-link">parcourir</span></p>
+                                <p class="upload-info">Formats supportés: JPG, PNG, WEBP (max. 5MB par image)</p>
+                            </div>
+                        </div>
+
+                        <div class="images-preview" id="imagesPreview">
+                            <!-- Les images uploadées apparaîtront ici -->
+                        </div>
+
+                        <div class="upload-limits">
+                            <p>Maximum 10 images • Minimum 3 images requises</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="uploadProgress"></div>
+                            </div>
+                            <span class="images-count" id="imagesCount">0/10 images</span>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Section 3: Tarification personnalisée par jour -->
+            <section class="form-section">
+                <h2 class="tarification-title">TARIFICATION PERSONNALISÉE PAR JOUR</h2>
+
+                <!-- Prix Semaine -->
+                <div class="tarif-section">
+                    <h3>Prix 'Semaine' (USD)</h3>
+                    <p class="tarif-subtitle">Prix par jour pour les jours Semaine</p>
+                    <p class="selection-text">SELECTIONNEZ LES JOURS INCLUS DANS CE TARIF <span class="highlight">"SEMAINE"</span>:</p>
+
+                    <div class="jours-selection">
+                        <div class="jours-grid">
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="lundi">
+                                <span class="custom-checkbox"></span>
+                                Lundi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="mardi">
+                                <span class="custom-checkbox"></span>
+                                Mardi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="mercredi">
+                                <span class="custom-checkbox"></span>
+                                Mercredi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="jeudi">
+                                <span class="custom-checkbox"></span>
+                                Jeudi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="vendredi">
+                                <span class="custom-checkbox"></span>
+                                Vendredi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="samedi">
+                                <span class="custom-checkbox"></span>
+                                Samedi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursSemaine" value="dimanche">
+                                <span class="custom-checkbox"></span>
+                                Dimanche
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="prix-input-group">
+                        <label for="prixSemaine">Prix pour les jours sélectionnés (USD) <span class="required">*</span></label>
+                        <input type="number" id="prixSemaine" name="prixSemaine" placeholder="0" min="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <hr class="tarif-divider">
+
+                <!-- Prix Weekend -->
+                <div class="tarif-section">
+                    <h3>Prix 'Weekend' (USD)</h3>
+                    <p class="tarif-subtitle">Prix par jour pour les jours Weekend</p>
+                    <p class="selection-text">SELECTIONNEZ LES JOURS INCLUS DANS CE TARIF <span class="highlight">"WEEKEND"</span>:</p>
+
+                    <div class="jours-selection">
+                        <div class="jours-grid">
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="lundi">
+                                <span class="custom-checkbox"></span>
+                                Lundi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="mardi">
+                                <span class="custom-checkbox"></span>
+                                Mardi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="mercredi">
+                                <span class="custom-checkbox"></span>
+                                Mercredi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="jeudi">
+                                <span class="custom-checkbox"></span>
+                                Jeudi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="vendredi">
+                                <span class="custom-checkbox"></span>
+                                Vendredi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="samedi">
+                                <span class="custom-checkbox"></span>
+                                Samedi
+                            </label>
+                            <label class="jour-checkbox">
+                                <input type="checkbox" name="joursWeekend" value="dimanche">
+                                <span class="custom-checkbox"></span>
+                                Dimanche
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="prix-input-group">
+                        <label for="prixWeekend">Prix pour les jours sélectionnés (USD) <span class="required">*</span></label>
+                        <input type="number" id="prixWeekend" name="prixWeekend" placeholder="0" min="0" step="0.01" required>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Section 4: Contrat et politique -->
+            <section class="form-section">
+                <div class="form-group">
+                    <label for="contrat">Contrat et politique d'annulation <span class="required">*</span></label>
+                    <textarea id="contrat" name="contrat" rows="4" placeholder="Ex: Délai de réservation 48h avant l'événement, SVR dans la semaine. Annulation : 7 jours avant sans remboursement..." required></textarea>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Section 5: Services inclus -->
+            <section class="form-section">
+                <h2>Services inclus</h2>
+                <div class="services-grid">
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="climatisation">
+                        <span class="checkmark"></span>
+                        Climatisation
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="chauffage">
+                        <span class="checkmark"></span>
+                        Chauffage
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="wifi">
+                        <span class="checkmark"></span>
+                        WIFI
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="projecteur">
+                        <span class="checkmark"></span>
+                        Projecteur
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="decoration">
+                        <span class="checkmark"></span>
+                        Décoration
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="photographie">
+                        <span class="checkmark"></span>
+                        Photographie
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="animation">
+                        <span class="checkmark"></span>
+                        Animation
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="service_traiteur">
+                        <span class="checkmark"></span>
+                        Service traiteur
+                    </label>
+                    <label class="service-checkbox">
+                        <input type="checkbox" name="services" value="autres">
+                        <span class="checkmark"></span>
+                        Autres
+                    </label>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-full btn-large" data-icon="✍">S'inscrire</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/inscription.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-target');
+                const input = document.getElementById(id);
+                if (!input) return;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = '🙈';
+                    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+                } else {
+                    input.type = 'password';
+                    btn.textContent = '👁️';
+                    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

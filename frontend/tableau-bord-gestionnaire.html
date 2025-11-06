@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Gestionnaire</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/common.css">
+</head>
+<body class="dashboard-page">
+    <style>
+    /* Fallback minimal styles if external CSS fails to load — robust off-canvas pattern */
+    body.dashboard-page { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; color:#333; }
+    .header-hamburger { display:inline-block; background:#fff; color:#333; padding:6px 10px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.12); cursor:pointer; z-index:200100; border:0 }
+
+    /* Sidebar: fixed, full-height and high z-index so it sits above page content */
+    .sidebar { width:280px; max-width:85vw; height:100vh; background: linear-gradient(135deg,#2c3e50 0%,#34495e 100%); color:#fff; position:fixed; top:0; left:0; padding:20px; box-sizing:border-box; will-change:transform; z-index:200000; transform: translateX(0); }
+    .sidebar ul { list-style:none; padding:0; margin:0; }
+    .sidebar a { display:block; color:rgba(255,255,255,0.95); padding:10px 6px; text-decoration:none; border-radius:4px; }
+    .sidebar a:hover { background: rgba(255,255,255,0.03); color:#fff; }
+
+    .dashboard-content { margin-left:280px; padding:20px; }
+    .dashboard-section { background:#fff; padding:18px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+    .salle-calendar { min-height:320px; background:#fff; border-radius:8px; padding:12px; box-shadow: inset 0 1px 0 rgba(0,0,0,0.02); }
+
+    /* Overlay hidden by default - use opacity to avoid layout display issues */
+    #sidebarOverlay { display:block; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:199990; pointer-events:none; opacity:0; transition:opacity .2s ease }
+    body.sidebar-open #sidebarOverlay { opacity:1; pointer-events:auto }
+
+    /* Disable main content interaction when sidebar open */
+    body.sidebar-open .dashboard-content, body.sidebar-open .dashboard-section { pointer-events:none; filter:blur(0.15px); }
+    </style>
+    <header>
+        <nav>
+            <div class="header-hamburger" id="menuToggle" aria-label="Ouvrir le menu" style="font-size:20px;line-height:1">☰</div>
+            <div class="logo">RoomReservation</div>
+            <div class="nav-links">
+                <a href="#" class="notification-link">
+                    Notifications <span id="notification-count">0</span>
+                </a>
+                <a href="#" onclick="deconnexion()">Déconnexion</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#" onclick="afficherSection('infos')">Informations Salle</a></li>
+                <li><a href="#" onclick="afficherSection('reservations')">Réservations <span id="badge-reservations" class="nav-badge" style="display:none">0</span></a></li>
+                <li><a href="#" onclick="afficherSection('calendrier')">Calendrier</a></li>
+                <li><a href="#" onclick="afficherSection('messages')">Messages <span id="badge-messages" class="nav-badge" style="display:none">0</span></a></li>
+                <li><a href="#" onclick="afficherSection('photos')">Gestion Photos</a></li>
+            </ul>
+        </aside>
+    <div id="sidebarOverlay" aria-hidden="true"></div>
+
+        <section class="dashboard-content">
+            <div class="dashboard-actions" style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:12px">
+                <button class="btn-home" onclick="window.location.href='index.html'">Accueil</button>
+                <button class="btn-logout" onclick="deconnexion()">Déconnexion</button>
+            </div>
+            <!-- Section Informations Salle -->
+            <div id="section-infos" class="dashboard-section active">
+                <h2>Informations de la Salle</h2>
+                <form id="form-infos-salle">
+                    <!-- Formulaire d'édition des informations -->
+                </form>
+            </div>
+
+            <!-- Section Réservations -->
+            <div id="section-reservations" class="dashboard-section">
+                <h2>Demandes de Réservation</h2>
+                <div id="liste-reservations">
+                    <!-- Liste des réservations -->
+                </div>
+                <div id="historique-reservations" style="margin-top:16px">
+                    <!-- Historique des actions sur les réservations -->
+                </div>
+            </div>
+
+            <div id="section-calendrier" class="dashboard-section">
+                <h2>Calendrier de la salle</h2>
+                <div style="margin-bottom:12px">
+                    <label for="salleSelect">Sélectionner une salle :</label>
+                    <select id="salleSelect"></select>
+                </div>
+                <div id="managerCalendar" class="salle-calendar" aria-live="polite"></div>
+                <div id="dayDetails" style="margin-top:12px"></div>
+            </div>
+
+            <!-- Section Photos -->
+            <div id="section-photos" class="dashboard-section">
+                <h2>Gestion des Photos</h2>
+                <div style="margin-bottom:8px">
+                    <label for="photosSalleSelect">Sélectionner une salle :</label>
+                    <select id="photosSalleSelect"></select>
+                </div>
+                <input type="file" id="upload-photos" multiple accept="image/*">
+                <div id="galerie-photos"></div>
+            </div>
+
+            <!-- Section Messages -->
+            <div id="section-messages" class="dashboard-section">
+                <h2>Messages</h2>
+                <div style="margin-bottom:12px">
+                    <label for="salleSelectMsgs">Messages pour la salle :</label>
+                    <select id="salleSelectMsgs"></select>
+                </div>
+                <div id="messagesList" style="margin-bottom:12px"></div>
+                <div id="messageComposer">
+                    <h3>Envoyer un message</h3>
+                    <div style="margin-bottom:8px">
+                        <label for="msgReservationSelect">Destinataire (demandeur)</label>
+                        <select id="msgReservationSelect" style="width:100%;padding:8px;margin-bottom:8px"></select>
+                    </div>
+                    <input type="text" id="msgSujet" placeholder="Sujet" style="width:100%;padding:8px;margin-bottom:8px">
+                    <textarea id="msgBody" rows="4" placeholder="Votre message" style="width:100%;padding:8px;margin-bottom:8px"></textarea>
+                    <button id="sendMsgBtn" class="btn-primary">Envoyer</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script type="module" src="js/gestionnaire.js"></script>
+    <!-- Global Lightbox for proof images -->
+    <div id="imgLightbox" class="lightbox" aria-hidden="true">
+        <div class="lightbox-backdrop" data-close="1"></div>
+        <div class="lightbox-body" role="dialog" aria-modal="true">
+            <button class="lightbox-close" aria-label="Fermer" title="Fermer" data-close="1">✕</button>
+            <div class="lightbox-canvas">
+                <img id="lightboxImg" class="lightbox-img" alt="Preuve de paiement">
+            </div>
+            <div class="lightbox-controls">
+                <button class="zoom-btn" id="lbZoomOut" title="Zoom -">−</button>
+                <button class="zoom-btn" id="lbZoomReset" title="Réinitialiser">100%</button>
+                <button class="zoom-btn" id="lbZoomIn" title="Zoom +">＋</button>
+            </div>
+        </div>
+    </div>
+    <!-- Manager reservation modal (opened from calendar day) -->
+    <div id="managerReservationModal" class="modal" aria-hidden="true" style="display:none">
+        <div class="modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:2000"></div>
+        <div class="modal-content" role="dialog" aria-modal="true" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:18px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:2001;max-width:520px;width:94%">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <h3 style="margin:0;font-size:1.1rem">Créer une réservation (Gestionnaire)</h3>
+                <button id="modalCloseBtn" aria-label="Fermer" style="background:none;border:none;font-size:20px">✕</button>
+            </div>
+            <form id="modalReservationForm" style="display:flex;flex-direction:column;gap:8px">
+                <input type="hidden" id="modal_salle_id">
+                <input type="hidden" id="modal_date">
+                <input id="modal_nom" placeholder="Nom" required style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                <input id="modal_prenom" placeholder="Prénom" style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                <input id="modal_email" placeholder="Email" style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                <input id="modal_telephone" placeholder="Téléphone" style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                <div style="position:relative">
+                    <input id="modal_password" type="password" minlength="6" placeholder="Mot de passe du client (min 6)" style="padding:8px 38px 8px 8px;border:1px solid #e0e0e0;border-radius:6px;width:100%">
+                    <button type="button" class="password-toggle" data-target="modal_password" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;">👁️</button>
+                </div>
+                <select id="modal_type" style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                    <option value="">Type d'événement</option>
+                    <option>Mariage</option>
+                    <option>Réunion</option>
+                    <option>Conférence</option>
+                    <option>Anniversaire</option>
+                    <option>Autre</option>
+                </select>
+                <input id="modal_invites" type="number" min="1" placeholder="Nombre d'invités" style="padding:8px;border:1px solid #e0e0e0;border-radius:6px">
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+                    <button type="button" id="modalCancel" class="btn-cancel">Annuler</button>
+                    <button type="button" id="modalSubmit" class="btn-primary">Créer réservation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+    /* Responsive behaviour for sidebar and hamburger */
+    @media (max-width: 900px) {
+        #menuToggle { display:inline-block; }
+        .sidebar { transform: translateX(-112%); transition: transform .28s cubic-bezier(.2,.9,.2,1); position: fixed; }
+        body.sidebar-open .sidebar { transform: translateX(0); }
+        .dashboard-content { margin-left: 0; }
+    }
+    @media (min-width: 901px) {
+        #menuToggle { display:none; }
+    }
+    </style>
+    <style>
+    /* Sidebar nav badge (counter) */
+    .nav-badge{display:inline-flex;min-width:18px;height:18px;padding:0 6px;margin-left:6px;border-radius:999px;background:#ef4444;color:#fff;font-size:.75rem;align-items:center;justify-content:center;line-height:1;font-weight:800}
+    </style>
+    <script>
+    // Robust toggle for manager sidebar: waits for DOM and explicitly manages transform/overlay
+    (function(){
+        function initManagerSidebar(){
+            const menu = document.getElementById('menuToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebar = document.querySelector('.sidebar');
+            if (!sidebar) return;
+
+            // initialize off-canvas for small screens
+            if (window.innerWidth <= 900) sidebar.style.transform = 'translateX(-100%)';
+
+            function openSidebar(){
+                console.debug('[MANAGER] openSidebar');
+                document.body.classList.add('sidebar-open');
+                sidebar.style.transform = 'translateX(0)';
+                if (overlay) overlay.style.opacity = '1';
+                // lock scroll and mark menu expanded
+                document.body.style.overflow = 'hidden';
+                if (menu) { menu.setAttribute('aria-expanded','true'); menu.disabled = true; }
+                const firstLink = sidebar.querySelector('a'); if (firstLink) firstLink.focus();
+            }
+
+            function closeSidebar(){
+                console.debug('[MANAGER] closeSidebar');
+                document.body.classList.remove('sidebar-open');
+                if (window.innerWidth <= 900) sidebar.style.transform = 'translateX(-112%)';
+                if (overlay) overlay.style.opacity = '0';
+                document.body.style.overflow = '';
+                if (menu) { menu.setAttribute('aria-expanded','false'); menu.disabled = false; }
+            }
+
+            if (menu) {
+                menu.style.cursor = 'pointer';
+                menu.addEventListener('click', () => {
+                    console.debug('[MANAGER] menuToggle clicked, open=', document.body.classList.contains('sidebar-open'));
+                    if (document.body.classList.contains('sidebar-open')) closeSidebar(); else openSidebar();
+                });
+            }
+
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+            document.querySelectorAll('.sidebar a').forEach(a => a.addEventListener('click', closeSidebar));
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 900) {
+                    sidebar.style.transform = '';
+                    if (overlay) overlay.style.display = 'none';
+                    document.body.classList.remove('sidebar-open');
+                } else {
+                    if (!document.body.classList.contains('sidebar-open')) sidebar.style.transform = 'translateX(-100%)';
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initManagerSidebar); else initManagerSidebar();
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+/* Styles pour la page de recherche de salles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.recherche-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.recherche-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* center page title */
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e1e5e9;
+}
+
+.recherche-header h1 {
+    color: #2575fc;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.back-button {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    transition: all 0.18s ease;
+    background: rgba(0, 0, 0, 0.55);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    z-index: 9999;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(-5px);
+}
+
+/* Section recherche */
+.search-section {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-input-group {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px 0 0 8px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2575fc;
+    box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.1);
+}
+
+.search-button {
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    background: #1c68e0;
+}
+
+/* Filtres et tri */
+.filters-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sort-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-group label {
+    font-weight: 600;
+    color: #333;
+}
+
+.sort-select {
+    padding: 10px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 5px;
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.filter-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.filter-button:hover {
+    border-color: #2575fc;
+    color: #2575fc;
+}
+
+/* Filtres avancés */
+.advanced-filters {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.price-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-input, .capacity-input {
+    padding: 10px 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.services-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.service-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.service-filter input {
+    display: none;
+}
+
+.service-filter .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e1e5e9;
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.service-filter input:checked + .checkmark {
+    background-color: #2575fc;
+    border-color: #2575fc;
+}
+
+.service-filter input:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+/* Boutons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #2575fc;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+    background-color: #1c68e0;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Section résultats */
+.results-section {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e1e5e9;
+}
+
+.results-header h2 {
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.view-options {
+    display: flex;
+    gap: 5px;
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.view-btn {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.view-btn.active {
+    background: white;
+    color: #2575fc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Container salles */
+.salles-container {
+    display: grid;
+    /* Force single-column layout so each salle-card fills the full horizontal space */
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+
+.salles-container.list-view {
+    grid-template-columns: 1fr;
+}
+
+/* Carte salle */
+.salle-card {
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    /* Allow content to expand when needed (long descriptions, extra lines) */
+    overflow: visible;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Ensure each card uses the available width */
+.salle-card {
+    width: 100%;
+    display: block;
+}
+
+/* Position the card footer (Details button) at the bottom-right corner of the card */
+.salle-card {
+    position: relative;
+    padding-bottom: 28px; /* reduced further to tighten vertical spacing */
+}
+
+.card-footer {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Ensure list view footer adapts (when card becomes horizontal) */
+.salle-card.list-view {
+    padding-bottom: 20px; /* less vertical space since layout is horizontal */
+}
+.salle-card.list-view .card-footer {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+}
+
+.salle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-color: #2575fc;
+}
+
+.salle-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.salle-content {
+    padding: 20px;
+}
+
+.salle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.salle-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.salle-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2575fc;
+}
+
+.salle-price span {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.salle-address {
+    color: #6c757d;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.salle-details {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.salle-detail {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.salle-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.service-tag {
+    background: #f8f9ff;
+    color: #2575fc;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.salle-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #ffc107;
+}
+
+/* États */
+.loading-state, .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e1e5e9;
+    border-top: 4px solid #2575fc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.empty-state h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Vue liste */
+.salle-card.list-view {
+    display: flex;
+}
+
+.salle-card.list-view .salle-image {
+    width: 200px;
+    height: auto;
+    flex-shrink: 0;
+}
+
+.salle-card.list-view .salle-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Thumbnail on the left and info on the right */
+.card-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+}
+
+.salle-thumb {
+    width: 3cm; /* approximately requested size */
+    max-width: 120px;
+    height: 3cm;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+
+.salle-thumb.placeholder {
+    display: inline-block;
+}
+
+.salle-info {
+    flex: 1;
+}
+
+.salle-details {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 8px 0 12px 0;
+}
+
+.salle-detail {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+/* Ensure prices appear on their own line under capacity */
+.salle-prices {
+    display: flex;
+    gap: 12px;
+    width: 100%; /* force new line under capacity */
+    margin-top: 6px;
+    align-items: center;
+}
+
+/* On very small screens stack prices vertically for readability */
+@media (max-width: 480px) {
+    .salle-prices { flex-direction: column; align-items: flex-start; }
+}
+
+.salle-services {
+    margin-top: 6px;
+}
+
+/* Ensure card-footer does not overlap content on small height cards */
+.salle-card { padding-bottom: 28px; }
+
+@media (max-width: 768px) {
+    .card-body {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .salle-thumb {
+        width: 100%;
+        height: 150px;
+        max-width: none;
+    }
+
+    .salle-card { padding-bottom: 20px; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .recherche-container {
+        padding: 15px;
+    }
+
+    .recherche-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .search-input-group {
+        flex-direction: column;
+    }
+
+    .search-input {
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .search-button {
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .salles-container {
+        grid-template-columns: 1fr;
+    }
+
+    .salle-card.list-view {
+        flex-direction: column;
+    }
+
+    .salle-card.list-view .salle-image {
+        width: 100%;
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-section, .results-section {
+        padding: 20px 15px;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .price-range {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .price-input, .capacity-input {
+        width: 100%;
+    }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Salle - RoomReserve</title>
+    <!-- Load common styles first, then page-specific so overrides win -->
+    <link rel="stylesheet" href="styles/common.css">
+    <link rel="stylesheet" href="styles/details-salle-responsive.css">
+</head>
+<body>
+    <div class="details-container">
+        <header class="details-header">
+            <a href="recherche-salles.html" class="back-button">← Retour</a>
+            <h1 id="salleNom">Chargement...</h1>
+        </header>
+
+        <main class="details-content">
+            <!-- Galerie photos -->
+            <section class="gallery-section">
+                <div id="salleGallery" class="salle-gallery">
+                    <div class="loading-gallery">Chargement des photos...</div>
+                </div>
+            </section>
+
+            <!-- Informations principales -->
+            <section class="info-section">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>📍 Adresse</h3>
+                        <p id="salleAdresse">Chargement...</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>👥 Capacité</h3>
+                        <p id="salleCapacite">Chargement...</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>💰 Tarifs</h3>
+                        <div id="salleTarifs">Chargement...</div>
+                    </div>
+                    <div class="info-card">
+                        <h3>👨‍💼 Gestionnaire</h3>
+                        <div id="salleGestionnaire">Chargement...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services -->
+            <section class="services-section">
+                <h2>✅ Services inclus</h2>
+                <div id="salleServices" class="services-list">
+                    Chargement des services...
+                </div>
+            </section>
+
+            <!-- Description -->
+            <section class="description-section">
+                <h2>📝 Description</h2>
+                <p id="salleDescription">Chargement de la description...</p>
+            </section>
+
+            <!-- Conditions d'annulation -->
+            <section class="conditions-section">
+                <h2>📋 Conditions d'annulation</h2>
+                <div id="conditionsAnnulation" class="conditions-content">
+                    Chargement des conditions...
+                </div>
+                <div class="conditions-agreement">
+                    <input type="checkbox" id="acceptConditions">
+                    <label for="acceptConditions">Je comprends et j'accepte les conditions d'annulation</label>
+                </div>
+            </section>
+
+            <!-- Calendrier -->
+            <section class="calendar-section">
+                <h2>📅 Disponibilités</h2>
+                <div id="salleCalendar" class="salle-calendar" aria-live="polite">
+                    <!-- calendrier sera rendu ici -->
+                </div>
+                    <div id="dayDetailsPublic" class="day-details" aria-live="polite" style="margin-top:10px"></div>
+            </section>
+
+            <!-- Bouton réservation -->
+            <section class="reservation-section">
+                <button id="reserverBtn" class="btn-reserver" onclick="ouvrirFormulaireReservation()">
+                    🗓️ Réserver cette salle
+                </button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal réservation -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fermerModal()">&times;</span>
+            <h2>📋 Demande de Réservation</h2>
+            <form id="reservationForm" class="reservation-form">
+                <input type="hidden" id="salleId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="reservationNom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" id="reservationPrenom" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email <small style="font-weight:500;color:#666">(optionnel)</small></label>
+                        <input type="email" id="reservationEmail" placeholder="email@exemple.com (optionnel)">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone *</label>
+                        <input type="tel" id="reservationTelephone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="position:relative;">
+                        <label>Mot de passe * <small style="font-weight:500;color:#666;display:block;font-size:0.85rem">Utilisé pour vous connecter et suivre la demande</small></label>
+                        <input type="password" id="reservationPassword" class="password-field" minlength="6" required placeholder="Choisissez un mot de passe (min 6 caractères)">
+                        <button type="button" class="password-toggle" data-target="reservationPassword" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Date de réservation *</label>
+                    <input type="date" id="reservationDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Type d'événement *</label>
+                    <select id="reservationType" required>
+                        <option value="">-- Choisir --</option>
+                        <option value="Mariage">Mariage</option>
+                        <option value="Réunion">Réunion</option>
+                        <option value="Conférence">Conférence</option>
+                        <option value="Anniversaire">Anniversaire</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nombre d'invités * <small id="cap-note" style="color:#666;font-weight:500;display:block;font-size:0.9rem">(max: —)</small></label>
+                    <input type="number" id="reservationInvites" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <h3>📋 Conditions d'annulation</h3>
+                    <div id="reservationConditions" style="max-height:160px;overflow:auto;padding:8px;border:1px solid #e6e6e6;background:#fff;margin-bottom:8px;color:#222;font-size:0.95rem">Chargement des conditions...</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <input type="checkbox" id="reservationAcceptConditions" required>
+                        <label for="reservationAcceptConditions">Je comprends et j'accepte les conditions d'annulation</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Envoyer la demande</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script type="module" src="js/details-salle.js"></script>
+    <script>
+    // Attach password toggle buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-target');
+                const input = document.getElementById(id);
+                if (!input) return;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = '🙈';
+                    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+                } else {
+                    input.type = 'password';
+                    btn.textContent = '👁️';
+                    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

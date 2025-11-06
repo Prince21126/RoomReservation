@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Gestionnaire - Room Reservation</title>
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/common.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <a href="index.html" class="back-button">← Retour</a>
+            <h1>Connexion</h1>
+            <h2>Connexion Gestionnaire</h2>
+        </div>
+
+        <form class="auth-form" id="loginForm" autocomplete="on">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="votre@email.com"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group" style="position:relative;">
+                <label for="password">Mot de passe</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="password-field"
+                    placeholder="Entrez votre mot de passe"
+                    autocomplete="current-password"
+                    required
+                >
+                <button type="button" class="password-toggle" data-target="password" aria-label="Afficher le mot de passe" title="Afficher / masquer" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;">👁️</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" data-icon="🔒">Se connecter</button>
+
+            <div class="auth-links">
+                <a href="inscription_gestionnaire.html">Créer un compte gestionnaire</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script type="module">
+    import { ApiConfig } from './js/config/api.js';
+
+    function notify(message, type = 'info') {
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+        const el = document.createElement('div'); el.className = `notification ${type}`; el.textContent = message;
+        el.style.cssText = `position:fixed;top:18px;right:18px;padding:12px 16px;border-radius:8px;z-index:10000;box-shadow:0 6px 18px rgba(0,0,0,0.12);background:${type==='error'?'#f8d7da':type==='success'?'#d4edda':'#d1ecf1'};color:${type==='error'?'#721c24':type==='success'?'#155724':'#0c5460'}`;
+        document.body.appendChild(el);
+        setTimeout(()=>{ if (el.parentNode) el.parentNode.removeChild(el); }, 4000);
+    }
+
+    function initManagerLogin(){
+        const form = document.getElementById('loginForm');
+        if (!form) return;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = (document.getElementById('email')||{}).value || '';
+            const password = (document.getElementById('password')||{}).value || '';
+            if (!email.trim() || !password) { notify('Email et mot de passe requis', 'error'); return; }
+            const btn = form.querySelector('button[type="submit"]');
+            const original = btn ? btn.textContent : '';
+            if (btn) { btn.disabled = true; btn.textContent = 'Connexion...'; }
+            try {
+                const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '';
+                const isStaticOrigin = origin.includes(':5500') || origin.includes(':3000');
+                if (isStaticOrigin) {
+                    const f = document.createElement('form');
+                    f.method = 'POST';
+                    f.action = 'http://localhost:8000/api/connexion.php?redirect=1';
+                    const i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'email'; i1.value = email; f.appendChild(i1);
+                    const i2 = document.createElement('input'); i2.type = 'hidden'; i2.name = 'password'; i2.value = password; f.appendChild(i2);
+                    const i3 = document.createElement('input'); i3.type = 'hidden'; i3.name = 'redirect'; i3.value = '1'; f.appendChild(i3);
+                    document.body.appendChild(f);
+                    f.submit();
+                    return;
+                }
+                const result = await ApiConfig.makeRequest('/connexion.php', { method: 'POST', body: JSON.stringify({ email, password }) });
+                if (result && result.success) {
+                    // Vérifier immédiatement que la session est bien active avant de rediriger
+                    try {
+                        const check = await ApiConfig.makeRequest('/current_gestionnaire.php');
+                        if (check && check.success) {
+                            notify('Connexion réussie', 'success');
+                            setTimeout(()=>{ window.location.href = 'tableau-bord-gestionnaire.html'; }, 300);
+                        } else {
+                            notify('Connexion réussie mais session absente. Ouvrez le site via http://localhost:8000/frontend/.', 'error');
+                        }
+                    } catch (e) {
+                        notify('Connexion réussie mais impossible de vérifier la session (même origine requise).', 'error');
+                    }
+                } else {
+                    notify(result && result.message ? result.message : 'Connexion échouée', 'error');
+                }
+            } catch (err) {
+                console.error('Erreur login gestionnaire', err);
+                notify(err && err.message ? err.message : 'Erreur lors de la connexion', 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = original; }
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initManagerLogin); else initManagerLogin();
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-target');
+                const input = document.getElementById(id);
+                if (!input) return;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = '🙈';
+                    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+                } else {
+                    input.type = 'password';
+                    btn.textContent = '👁️';
+                    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
