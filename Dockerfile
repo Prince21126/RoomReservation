@@ -7,7 +7,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Copier le contenu du dépôt dans /var/www/html
 # Si ton site est dans un dossier public/, remplace la ligne COPY par la ligne commentée juste dessous.
-COPY . /var/www/html/
+COPY public/ /var/www/html/
 # COPY public/ /var/www/html/
 
 # Définir les permissions
